@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mr Kjee Virtual Numbers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* small helper for truncated price pills */
+    .price-pill { min-width:72px; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-6xl mx-auto flex items-center justify-between p-4">
+      <div class="flex items-center gap-4">
+        <img src="https://i.imgur.com/4AiXzf8.png" alt="logo" class="w-12 h-12 rounded-full border"/>
+        <div>
+          <div class="font-bold text-xl">Mr Kjee Virtual Numbers</div>
+          <div class="text-xs text-gray-500">Instant OTP • Rentals • Developer API</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button id="depositTopBtn" class="px-4 py-2 rounded bg-green-600 text-white">Deposit</button>
+
+        <div id="balanceTop" class="hidden cursor-pointer px-3 py-2 rounded border text-sm"></div>
+
+        <div id="authBtns" class="flex gap-2 items-center">
+          <button id="loginBtn" class="px-3 py-2 rounded border">Login</button>
+          <button id="registerBtn" class="px-3 py-2 rounded bg-indigo-600 text-white">Register</button>
+        </div>
+
+        <div id="userMenu" class="hidden items-center gap-2">
+          <div id="userEmail" class="text-sm"></div>
+          <button id="logoutBtn" class="px-2 py-1 text-sm border rounded">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-16">
+    <div class="max-w-6xl mx-auto px-6 flex gap-8 items-center">
+      <div class="w-2/3">
+        <h1 class="text-4xl font-bold">Instant virtual numbers for OTP — activation & rentals</h1>
+        <p class="mt-4 text-lg text-indigo-100">Buy one-time OTP numbers or rent numbers for days/weeks/months. Aggregated from multiple providers — all shown here on Mr Kjee Virtual Numbers.</p>
+        <div class="mt-6 flex gap-3">
+          <a href="#buy" class="px-5 py-3 bg-white text-indigo-700 rounded-lg font-semibold">Buy Number</a>
+          <button id="heroDeposit" class="px-5 py-3 bg-transparent border border-white rounded-lg">Deposit</button>
+        </div>
+      </div>
+      <div class="w-1/3">
+        <img alt="hero" src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=900&auto=format&fit=crop&ixlib=rb-4.0.3&s=1a5b5c8b3b7f7efe9d7b5f1e7d1f8c34" class="rounded-lg shadow-lg"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto p-6">
+
+    <!-- Short intro / buy quick -->
+    <div class="grid md:grid-cols-3 gap-6 mt-6">
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold">Quick Buy (Home)</h3>
+        <p class="text-sm text-gray-500 mt-2">No login required to browse. Choose activation (OTP) or rental.</p>
+        <div class="mt-4">
+          <select id="quickType" class="w-full p-2 border rounded">
+            <option value="activation">Activation (one-time OTP)</option>
+            <option value="rental">Rental (days/weeks/months)</option>
+          </select>
+          <select id="quickCountry" class="w-full p-2 border rounded mt-3">
+            <!-- populated JS -->
+          </select>
+          <select id="quickService" class="w-full p-2 border rounded mt-3">
+            <!-- populated JS -->
+          </select>
+          <div class="mt-4 flex gap-2">
+            <button id="quickBuy" class="px-4 py-2 bg-indigo-600 text-white rounded">Buy</button>
+            <button id="quickDetails" class="px-4 py-2 border rounded">See Options</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold">Why Mr Kjee?</h3>
+        <ul class="text-sm text-gray-600 mt-3 space-y-2">
+          <li>• Aggregated providers — best prices shown</li>
+          <li>• One-time OTP & long rentals (weekly/monthly)</li>
+          <li>• Developer API & per-user API keys</li>
+          <li>• Instant deposits — crypto gateway supported</li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold">Support</h3>
+        <p class="text-sm text-gray-600 mt-2">Telegram: <a href="https://t.me/mrkjeeofficial" target="_blank" class="text-blue-600">@mrkjeeofficial</a></p>
+        <p class="text-sm text-gray-600 mt-1">Email: <a href="mailto:kamrankhandani4@gmail.com" class="text-blue-600">kamrankhandani4@gmail.com</a></p>
+      </div>
+    </div>
+
+    <!-- Countries + Services (left) and Operators (right) -->
+    <div class="mt-8 grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 bg-white p-5 rounded-lg shadow">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-lg">Countries</h3>
+          <div>
+            <input id="searchCountry" placeholder="Search country / service..." class="p-2 border rounded text-sm" />
+          </div>
+        </div>
+
+        <div id="countryList" class="mt-4 space-y-2 max-h-72 overflow-auto">
+          <!-- populated by JS: each country row shows name + "from $x" -->
+        </div>
+
+        <div class="mt-6">
+          <h4 class="font-medium">Services in selected country</h4>
+          <div class="flex items-center gap-3 mt-3">
+            <label class="text-sm text-gray-600">Sort:</label>
+            <select id="sortServices" class="p-2 border rounded text-sm">
+              <option value="alpha">Alphabetical</option>
+              <option value="low">Lowest price</option>
+              <option value="high">Highest price</option>
+            </select>
+          </div>
+
+          <div id="serviceList" class="mt-3 grid md:grid-cols-2 gap-3">
+            <!-- services populated here -->
+          </div>
+        </div>
+      </div>
+
+      <aside class="bg-white p-5 rounded-lg shadow">
+        <h3 class="font-semibold">Operators (merged)</h3>
+        <div id="operatorList" class="mt-3 space-y-3 max-h-80 overflow-auto"></div>
+      </aside>
+    </div>
+
+    <!-- Buy modal (hidden) -->
+    <div id="buyModal" class="fixed inset-0 hidden items-center justify-center bg-black/50">
+      <div class="bg-white p-6 rounded-lg w-96">
+        <h3 class="font-semibold" id="buyModalTitle">Buy Number</h3>
+        <p id="buyModalInfo" class="text-sm text-gray-500 mt-2">Details</p>
+
+        <div class="mt-4">
+          <div class="text-sm">Price: <span id="buyPrice" class="font-semibold"></span></div>
+          <div class="mt-2 text-sm">Your balance: <span id="buyBalance" class="font-semibold"></span></div>
+          <div class="mt-3">
+            <label class="text-xs text-gray-600">If you proceed credits will be deducted automatically.</label>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-between">
+          <button id="cancelBuy" class="px-3 py-2 border rounded">Cancel</button>
+          <button id="confirmBuy" class="px-3 py-2 bg-indigo-600 text-white rounded">Confirm & Buy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet / History / Numbers page area -->
+    <div id="panelArea" class="mt-8 bg-white p-5 rounded-lg shadow hidden">
+      <div id="panelContent">
+        <!-- dynamically injected -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-6 text-sm text-gray-500">
+    © 2025 Mr Kjee Virtual Numbers
+  </footer>
+
+<script>
+/*
+  Demo frontend logic:
+  - stores demo provider data in localStorage
+  - users stored in localStorage.users
+  - orders stored in localStorage.orders
+  - authentication simulated; Google login is simulated click (for demo)
+  - Use this to demo UI. Replace storage & fetch calls with real backend later.
+*/
+
+// ------- Utilities -------
+const $ = id => document.getElementById(id);
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const load = (k, def) => JSON.parse(localStorage.getItem(k) || JSON.stringify(def));
+const currency = v => '$' + Number(v).toFixed(2);
+
+// ------- Initial demo data (providers/services) -------
+if (!localStorage.getItem('demo_inited')) {
+  // sample aggregated services from multiple providers - country / service / operator / price / provider
+  const services = [
+    { id:'tg_ru', country:'Russia', countryCode:'RU', service:'Telegram', operator:'MTS', provider:'5sim', price:0.12, type:'activation' },
+    { id:'tg_ru_2', country:'Russia', countryCode:'RU', service:'Telegram', operator:'Beeline', provider:'smsbower', price:0.10, type:'activation' },
+    { id:'wa_us', country:'United States', countryCode:'US', service:'WhatsApp', operator:'Verizon', provider:'smsman', price:0.22, type:'activation' },
+    { id:'fb_us', country:'United States', countryCode:'US', service:'Facebook', operator:'AT&T', provider:'smsactivate', price:0.18, type:'activation' },
+    { id:'tg_uk', country:'United Kingdom', countryCode:'UK', service:'Telegram', operator:'Vodafone', provider:'5sim', price:0.20, type:'rental' },
+    { id:'tg_uk_2', country:'United Kingdom', countryCode:'UK', service:'Telegram', operator:'EE', provider:'smsbower', price:0.19, type:'rental' },
+    { id:'ig_in', country:'India', countryCode:'IN', service:'Instagram', operator:'Jio', provider:'smsman', price:0.05, type:'activation' },
+    { id:'tg_tr', country:'Turkey', countryCode:'TR', service:'Telegram', operator:'Turkcell', provider:'smsactivate', price:0.09, type:'activation' },
+    { id:'wa_tr', country:'Turkey', countryCode:'TR', service:'WhatsApp', operator:'Turkcell', provider:'smsbower', price:0.11, type:'rental' },
+  ];
+  save('demo_services', services);
+  save('users', []); // empty users
+  save('orders', []); // empty orders
+  localStorage.setItem('demo_inited', '1');
+}
+
+// ------- State -------
+let services = load('demo_services', []);
+let users = load('users', []);
+let orders = load('orders', []);
+let currentUser = load('currentUser', null); // {email, balance, id}
+
+function refreshState() {
+  services = load('demo_services', []);
+  users = load('users', []);
+  orders = load('orders', []);
+  currentUser = load('currentUser', null);
+}
+
+// ------- UI helpers -------
+function showBalanceTop() {
+  refreshState();
+  if (currentUser) {
+    $('balanceTop').classList.remove('hidden');
+    $('userMenu').classList.remove('hidden');
+    $('authBtns').classList.add('hidden');
+    $('userEmail').textContent = currentUser.email;
+    $('balanceTop').textContent = currency(currentUser.balance ?? 0);
+  } else {
+    $('balanceTop').classList.add('hidden');
+    $('userMenu').classList.add('hidden');
+    $('authBtns').classList.remove('hidden');
+  }
+}
+
+function toast(msg) {
+  alert(msg);
+}
+
+// ------- Populate country list (with from $min) -------
+function buildCountryData() {
+  const map = {};
+  for (const s of services) {
+    if (!map[s.country]) map[s.country] = { country: s.country, code: s.countryCode, prices: [], services: {} };
+    map[s.country].prices.push(s.price);
+    if (!map[s.country].services[s.service]) map[s.country].services[s.service] = [];
+    map[s.country].services[s.service].push(s);
+  }
+  // compute min price
+  const arr = Object.values(map).map(c => {
+    c.min = Math.min(...c.prices);
+    return c;
+  }).sort((a,b)=>a.country.localeCompare(b.country));
+  return arr;
+}
+
+function renderCountryList(filter='') {
+  const list = buildCountryData().filter(c => {
+    const f = filter.trim().toLowerCase();
+    if (!f) return true;
+    if (c.country.toLowerCase().includes(f)) return true;
+    for (const svc of Object.keys(c.services)) if (svc.toLowerCase().includes(f)) return true;
+    return false;
+  });
+  const el = $('countryList');
+  el.innerHTML = '';
+  for (const c of list) {
+    const div = document.createElement('div');
+    div.className = 'flex items-center justify-between p-3 border rounded';
+    div.innerHTML = `
+      <div>
+        <div class="font-medium cursor-pointer country-btn" data-country="${c.country}">${c.country}</div>
+        <div class="text-xs text-gray-500">${Object.keys(c.services).length} services</div>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500">from</div>
+        <div class="font-semibold">${currency(c.min)}</div>
+      </div>`;
+    el.appendChild(div);
+  }
+  // attach listeners for country selection
+  document.querySelectorAll('.country-btn').forEach(btn=>{
+    btn.onclick = () => selectCountry(btn.dataset.country);
+  });
+}
+
+function renderServicesForCountry(country, sort='alpha') {
+  const svcBox = $('serviceList');
+  svcBox.innerHTML = '';
+  if (!country) return;
+  const cObj = buildCountryData().find(c => c.country === country);
+  if (!cObj) return;
+  // flatten services with best price per service
+  let list = Object.entries(cObj.services).map(([svc, items])=>{
+    const min = Math.min(...items.map(i=>i.price));
+    const totalOperators = new Set(items.map(i=>i.operator)).size;
+    return { name: svc, minPrice: min, items };
+  });
+  if (sort === 'alpha') list.sort((a,b)=>a.name.localeCompare(b.name));
+  if (sort === 'low') list.sort((a,b)=>a.minPrice - b.minPrice);
+  if (sort === 'high') list.sort((a,b)=>b.minPrice - a.minPrice);
+  for (const s of list) {
+    const card = document.createElement('div');
+    card.className = 'p-3 border rounded flex justify-between items-center';
+    card.innerHTML = `
+      <div>
+        <div class="font-medium">${s.name}</div>
+        <div class="text-xs text-gray-500">${s.items.length} offers • ${s.items.map(x=>x.provider).filter((v,i,a)=>a.indexOf(v)===i).join(', ')}</div>
+      </div>
+      <div class="text-right">
+        <div class="price-pill font-semibold">${currency(s.minPrice)}</div>
+        <div class="mt-2"><button class="px-3 py-1 border rounded viewService" data-service="${s.name}" data-country="${country}">View</button></div>
+      </div>`;
+    svcBox.appendChild(card);
+  }
+
+  // hook view buttons
+  document.querySelectorAll('.viewService').forEach(b=>{
+    b.onclick = () => openServiceOperators(b.dataset.country, b.dataset.service);
+  });
+}
+
+function renderOperatorList(country, service) {
+  const out = $('operatorList');
+  out.innerHTML = '';
+  if (!country || !service) {
+    out.innerHTML = '<div class="text-xs text-gray-500">Select country & service to see operators</div>';
+    return;
+  }
+  // find all items matching
+  const items = services.filter(s => s.country === country && s.service === service);
+  // group by operator and compute lowest price & count
+  const opMap = {};
+  for (const it of items) {
+    if (!opMap[it.operator]) opMap[it.operator] = { operator: it.operator, offers: [], min: Infinity };
+    opMap[it.operator].offers.push(it);
+    opMap[it.operator].min = Math.min(opMap[it.operator].min, it.price);
+  }
+  const ops = Object.values(opMap).sort((a,b)=>a.operator.localeCompare(b.operator));
+  for (const o of ops) {
+    const row = document.createElement('div');
+    row.className = 'p-2 border rounded flex justify-between items-center';
+    row.innerHTML = `
+      <div>
+        <div class="font-medium">${o.operator}</div>
+        <div class="text-xs text-gray-500">${o.offers.length} numbers</div>
+      </div>
+      <div class="text-right">
+        <div class="font-semibold">${currency(o.min)}</div>
+        <div class="mt-2"><button class="px-3 py-1 bg-indigo-600 text-white rounded buyOperator" data-country="${country}" data-service="${service}" data-operator="${o.operator}">Buy</button></div>
+      </div>`;
+    out.appendChild(row);
+  }
+  // attach buy handlers
+  document.querySelectorAll('.buyOperator').forEach(b=>{
+    b.onclick = () => openBuyModal(b.dataset.country, b.dataset.service, b.dataset.operator);
+  });
+}
+
+// ------- Country select quick dropdowns -------
+function populateQuickSelectors() {
+  const countries = buildCountryData();
+  const quickCountry = $('quickCountry');
+  const quickService = $('quickService');
+  quickCountry.innerHTML = '<option value="">Choose country</option>';
+  const allServices = new Set();
+  for (const c of countries) {
+    const opt = document.createElement('option');
+    opt.value = c.country;
+    opt.textContent = `${c.country} — from ${currency(c.min)}`;
+    quickCountry.appendChild(opt);
+    for (const s of Object.keys(c.services)) allServices.add(s);
+  }
+  quickService.innerHTML = '<option value="">Choose service</option>';
+  Array.from(allServices).sort().forEach(s=>{
+    const o = document.createElement('option'); o.value = s; o.textContent = s; quickService.appendChild(o);
+  });
+}
+
+// ------- Select country from list -------
+let selectedCountry = null;
+let selectedService = null;
+function selectCountry(country) {
+  selectedCountry = country;
+  // show services for country
+  renderServicesForCountry(country, $('sortServices').value);
+  // populate operators
+  // show operator list filtered by none until user clicks service
+  renderOperatorList(country, null);
+  window.scrollTo({ top: 550, behavior: 'smooth' });
+}
+
+// ------- open service operators (from service card) -------
+function openServiceOperators(country, service) {
+  selectedCountry = country;
+  selectedService = service;
+  renderServicesForCountry(country, $('sortServices').value);
+  renderOperatorList(country, service);
+  window.scrollTo({ top: 550, behavior: 'smooth' });
+}
+
+// ------- Buy modal logic -------
+function openBuyModal(country, service, operator) {
+  if (!currentUser) return showLoginModal();
+  const matching = services.filter(s => s.country===country && s.service===service && s.operator===operator);
+  if (!matching.length) return toast('No numbers available');
+  // pick cheapest
+  const chosen = matching.sort((a,b)=>a.price - b.price)[0];
+  $('buyModalTitle').textContent = `Buy ${service} — ${operator}`;
+  $('buyModalInfo').textContent = `${country} • Provider: ${chosen.provider}`;
+  $('buyPrice').textContent = currency(chosen.price);
+  $('buyBalance').textContent = currency(currentUser.balance ?? 0);
+  $('buyModal').classList.remove('hidden');
+  // store temp selection
+  $('confirmBuy').dataset.price = chosen.price;
+  $('confirmBuy').dataset.serviceId = chosen.id;
+}
+
+$('confirmBuy').onclick = ()=>{
+  const price = Number($('confirmBuy').dataset.price || 0);
+  const serviceId = $('confirmBuy').dataset.serviceId;
+  if (!currentUser) return showLoginModal();
+  if (currentUser.balance < price) {
+    toast('Insufficient balance. Please deposit.');
+    return;
+  }
+  // create order and deduct
+  const order = {
+    id: 'ORD' + Date.now(),
+    userEmail: currentUser.email,
+    serviceId,
+    createdAt: new Date().toISOString(),
+    price,
+    status: 'active',
+    number: '+*******', // real provider will give actual number
+    expiresAt: new Date(Date.now() + 3*24*60*60*1000).toISOString(), // 3 days demo
+    sms: null,
+    rental: false
+  };
+  orders.push(order);
+  save('orders', orders);
+  // deduct from user
+  users = users.map(u => {
+    if (u.email === currentUser.email) {
+      u.balance = (u.balance || 0) - price;
+    }
+    return u;
+  });
+  save('users', users);
+  // update currentUser
+  currentUser = users.find(u=>u.email===currentUser.email);
+  save('currentUser', currentUser);
+  showBalanceTop();
+  $('buyModal').classList.add('hidden');
+  renderPanel('wallet'); // show wallet/history panel
+  toast('Number purchased — check Your numbers in Wallet/History.');
+};
+
+$('cancelBuy').onclick = ()=>$('buyModal').classList.add('hidden');
+
+// ------- Auth modals (simple) -------
+function showLoginModal() {
+  const email = prompt('Enter login email:');
+  if (!email) return;
+  const pass = prompt('Enter password:');
+  if (!pass) return;
+  users = load('users', []);
+  const u = users.find(x=>x.email===email);
+  if (!u) return alert('User not found. Please register first.');
+  if (u.password !== pass) return alert('Password incorrect.');
+  currentUser = { email: u.email, balance: u.balance || 0 };
+  save('currentUser', currentUser);
+  showBalanceTop();
+  renderPa
